@@ -150,6 +150,9 @@ function loadCategories() {
 }
 
 function deleteCategory(cat) {
+  const confirmed = confirm(`Are you sure you want to delete the category "${cat}"?`);
+  if (!confirmed) return;
+
   let materials = JSON.parse(localStorage.getItem("materials") || "[]");
   materials = materials.filter(m => m.category !== cat);
   localStorage.setItem("materials", JSON.stringify(materials));
@@ -201,11 +204,17 @@ function filterCategories() {
 function filterMaterials() {
   const value = document.getElementById("material-search").value.toLowerCase();
   const rows = document.querySelectorAll("#material-table-body tr");
+
   rows.forEach(row => {
     const name = row.children[0].innerText.toLowerCase();
-    row.style.display = name.includes(value) ? "table-row" : "none";
+    const type = row.children[1].innerText.toLowerCase();
+    const quantity = row.children[3].innerText.toLowerCase();
+
+    const match = name.includes(value) || type.includes(value) || quantity.includes(value);
+    row.style.display = match ? "table-row" : "none";
   });
 }
+
 
 function saveMaterial() {
   const name = document.getElementById("material-name").value.trim();
